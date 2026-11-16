@@ -172,7 +172,7 @@ function saveState() {
 
 function restoreState() {
     try {
-        const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? "null");
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
         if (!saved) { renderSelected(); return; };
 
         if (Array.isArray(saved.students)) selectedStudents = saved.students;
