@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS user_selections (
 CREATE TABLE IF NOT EXISTS user_prefs (
     username TEXT PRIMARY KEY,
     sort_key TEXT, sort_dir INTEGER
-    sort_dir INTEGER
 );
 """
 

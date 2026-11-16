@@ -32,6 +32,7 @@ def create_app():
     app.register_blueprint(eminerva_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(lists_bp)
+    app.register_blueprint(selection_bp)
     app.register_blueprint(notes_bp)
 
     return app
