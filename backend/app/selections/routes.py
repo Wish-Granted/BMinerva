@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, current_app, session
 
 from ..utils.decorators import login_required
 
-selection_bp = Blueprint("selections", __name__, url_prefix="/api/selections")
+selection_bp = Blueprint("selection", __name__, url_prefix="/api/selection")
 
 def _username() -> str:
     return session["user"]
