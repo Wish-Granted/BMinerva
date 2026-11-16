@@ -3,7 +3,7 @@ from flask import Flask
 from .config import Config
 from .students.csv_repository import CSVStudentRepository
 from .students.routes import students_bp
-from .lists.sqlite_repository import SQLiteRepository
+from .lists.sqlite_lists_repository import SQLiteListsRepository
 from .lists.routes import lists_bp
 from .notes.txt_notes import TXTNotes
 from .notes.routes import notes_bp
@@ -20,7 +20,7 @@ def create_app():
     session_ext.init_app(app)
     
     app.student_repository = CSVStudentRepository(app.config["STUDENT_DATA_PATH"]) #change when using LDAP
-    app.list_repository = SQLiteRepository(app.config["LISTS_DB_PATH"])
+    app.list_repository = SQLiteListsRepository(app.config["LISTS_DB_PATH"])
     app.notes = TXTNotes(app.config["NOTES_PATH"])
     
     app.register_blueprint(students_bp)
