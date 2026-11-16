@@ -18,6 +18,6 @@ class Config:
     SESSION_USE_SIGNER = True
     SESSION_REDIS = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
 
-    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = os.getenv("COOKIE_SECURE", "1") == "1"
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"

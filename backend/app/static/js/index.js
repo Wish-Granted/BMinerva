@@ -543,7 +543,7 @@ function updatePeriodNowButton() {
 // NOTES vv
 
 const NOTES_SAVE_DELAY = 800;        // ms to wait after typing stops
-const NOTES_POLL_INTERVAL = 15000;   // ms between checks for other people's edits
+const NOTES_POLL_INTERVAL = 5000;   // ms between checks for other people's edits
 
 let notesSaveTimer = null;
 let notesDirty = false;    // local edits not yet saved
