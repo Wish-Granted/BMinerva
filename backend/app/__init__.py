@@ -22,8 +22,8 @@ def create_app():
     session_ext.init_app(app)
     
     app.student_repository = CSVStudentRepository(app.config["STUDENT_DATA_PATH"]) #change when using LDAP
-    app.list_repository = SQLiteListRepository(app.config["LISTS_DB_PATH"])
-    app.selection_repository = SQLiteSelectionRepository(app.config["LISTS_DB_PATH"])
+    app.list_repository = SQLiteListRepository(app.config["SQLITE_DB_PATH"])
+    app.selection_repository = SQLiteSelectionRepository(app.config["SQLITE_DB_PATH"])
     app.notes = TXTNotes(app.config["NOTES_PATH"])
     
     app.register_blueprint(students_bp)
