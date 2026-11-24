@@ -4,3 +4,4 @@
 /backend/data
 /electron/node_modules
 /certs
+.DS_Store
