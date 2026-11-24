@@ -155,35 +155,43 @@ bindSortHeaders(selectedTable, selectedSort, () => {
 });
 
 // For selection persistance vv
-const STORAGE_KEY = "bminerva.selectedStudents";
+let saveTimer = null;
 
 function saveState() {
+    // debounce: ticking 30 students shouldn't send 30 requests
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(pushState, 500);
+}
+
+async function pushState() {
     try {
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-            students: selectedStudents,
-            called: [...calledIds],
-            sort: selectedSort,
-            lastUpdated: lastUpdatedString,
-        }));
+        const resp = await apiFetch("/api/selection", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                student_ids: selectedStudents.map((s) => s.id),
+                called: [...calledIds],
+                sort: selectedSort,
+            }),
+        });
+        if (!resp.ok) console.error("Could not save selection: HTTP", resp.status);
     } catch (err) {
         console.error("Could not save selection:", err);
     }
 }
 
-function restoreState() {
+async function restoreState() {
     try {
-        const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? "null");
-        if (!saved) { renderSelected(); return; };
+        const resp = await apiFetch("/api/selection");
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const saved = await resp.json();
 
-        if (Array.isArray(saved.students)) selectedStudents = saved.students;
+        // timetable: undefined = "still loading", same as when a student is first selected
+        selectedStudents = (saved.students ?? []).map((s) => ({ ...s, timetable: undefined }));
         (saved.called ?? []).forEach((id) => calledIds.add(id));
         if (saved.sort && selectedSortValues[saved.sort.key]) {
             selectedSort.key = saved.sort.key;
             selectedSort.dir = saved.sort.dir === -1 ? -1 : 1;
-        }
-
-        if (saved.lastUpdated) {
-            lastUpdatedString = saved.lastUpdated;
         }
     } catch (err) {
         console.error("Could not restore selection:", err);
@@ -192,7 +200,7 @@ function restoreState() {
 
     lastUpdated.textContent = `Last Updated: ${lastUpdatedString}`;
     renderSelected();
-    // anything that never finished loading (or failed) last time gets fetched again
+    renderStudents();   // tick the matching rows in the search table
     selectedStudents
         .filter((s) => s.timetable === undefined || s.loadFailed)
         .forEach((s) => loadTimetable(s.id));
@@ -543,7 +551,7 @@ function updatePeriodNowButton() {
 // NOTES vv
 
 const NOTES_SAVE_DELAY = 800;        // ms to wait after typing stops
-const NOTES_POLL_INTERVAL = 15000;   // ms between checks for other people's edits
+const NOTES_POLL_INTERVAL = 5000;   // ms between checks for other people's edits
 
 let notesSaveTimer = null;
 let notesDirty = false;    // local edits not yet saved

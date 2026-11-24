@@ -7,7 +7,7 @@ load_dotenv()
 
 class Config:
     STUDENT_DATA_PATH = os.getenv("STUDENT_DATA_PATH", "data/students.csv")
-    LISTS_DB_PATH = os.getenv("LISTS_DB_PATH", "data/lists.db")
+    SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "data/bminerva.db")
     NOTES_PATH = os.getenv("NOTES_PATH", "data/notes.txt")
 
     SECRET_KEY = os.getenv("SECRET_KEY")
@@ -18,6 +18,6 @@ class Config:
     SESSION_USE_SIGNER = True
     SESSION_REDIS = redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379"))
 
-    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = os.getenv("COOKIE_SECURE", "1") == "1"
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"

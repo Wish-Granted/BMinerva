@@ -1,7 +1,7 @@
 import sqlite3
 from pathlib import Path
 
-from .repository import ListRepository
+from .lists_repository import ListRepository
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS lists (
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS list_items (
 );
 """
 
-class SQLiteRepository(ListRepository):
+class SQLiteListRepository(ListRepository):
     def __init__(self, db_path: str):
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
