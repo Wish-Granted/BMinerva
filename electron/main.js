@@ -89,7 +89,7 @@ function createMainWindow() {
     height: 800,
     webPreferences: {
       session: session.fromPartition('persist:app'),
-      contextIsolation: false,
+      contextIsolation: true,
       nodeIntegration: false,
       preload: path.join(__dirname, "preload.js")
     },
