@@ -44,7 +44,7 @@ function createLoginWindow() {
       } else {
         createMainWindow();
       }
-      console.log("sending cookies to redis")
+      console.log("sending cookies")
       await captureAndSendCookies(loginWindow);
       loginWindow.close();
     }

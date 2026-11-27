@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import redis
 from datetime import timedelta
 from pathlib import Path
 

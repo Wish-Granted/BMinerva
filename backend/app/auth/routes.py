@@ -1,4 +1,3 @@
-import json
 import secrets
 
 from flask import Blueprint, current_app, jsonify, redirect, render_template, request, session
