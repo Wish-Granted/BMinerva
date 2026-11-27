@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "scripts": {
+    "start": ".venv\\Scripts\\python.exe -X utf8 backend/wsgi.py"
+  }
+}
