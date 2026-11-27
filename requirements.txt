@@ -5,3 +5,4 @@ requests
 beautifulsoup4==4.15.0
 Flask-SQLAlchemy
 cryptography
+cheroot

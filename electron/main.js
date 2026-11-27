@@ -3,7 +3,7 @@ const path = require('path');
 
 const EMINERVA_LOGIN_URL = 'https://eminerva.bne.catholic.edu.au/eMinerva';
 const EMINERVA_LOGGED_IN_URL_PATTERN = 'eminerva.bne.catholic.edu.au';
-const BACKEND_URL = 'http://localhost:8000';
+const BACKEND_URL = 'http://10.16.216.20:8443/';
 
 let mainWindow;
 let loginWindow;
