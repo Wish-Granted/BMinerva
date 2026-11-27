@@ -1,9 +1,9 @@
-import json
 import secrets
 
 from flask import Blueprint, current_app, jsonify, redirect, render_template, request, session
 
 from .eminerva_client import build_session, is_logged_in, serialize_cookies
+from ..utils.crypto import encrypt_json
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 web_auth_bp = Blueprint("web_auth", __name__)
@@ -13,7 +13,7 @@ HANDOFF_TTL = 60  # seconds a handoff token stays valid
 
 def store_login(cookies: list[dict], username: str):
     session.permanent = True
-    session["eminerva_cookies"] = [c for c in cookies if c["name"] in TARGET_NAMES]
+    session["eminerva_cookies"] = encrypt_json([c for c in cookies if c["name"] in TARGET_NAMES])
     session["user"] = username
 
 @auth_bp.route("/eminerva-session", methods=["POST"])
@@ -40,7 +40,7 @@ def create_eminerva_session():
     session.permanent = True
     target_names = {"MRHSession", "ASP.NET_SessionId"}
     serialized = serialize_cookies(eminerva_session)
-    session["eminerva_cookies"] = [c for c in serialized if c["name"] in target_names]
+    session["eminerva_cookies"] = encrypt_json([c for c in serialized if c["name"] in target_names])
     session["user"] = username
 
     return jsonify({"message": "eMinerva session stored"})
@@ -82,24 +82,15 @@ def extension_handoff():
         "cookies": [c for c in serialize_cookies(eminerva_session) if c["name"] in TARGET_NAMES],
         "user": username,
     }
-    current_app.config["SESSION_REDIS"].setex(f"handoff:{token}", HANDOFF_TTL, json.dumps(payload))
+    current_app.handoff_store.put(token, payload, HANDOFF_TTL)
     return jsonify({"token": token})
 
 @auth_bp.route("/claim", methods=["GET"])
 def claim():
     token = request.args.get("token", "")
-    key = f"handoff:{token}"
-
-    # read + delete in one transaction so a token can only be used once
-    pipe = current_app.config["SESSION_REDIS"].pipeline()
-    pipe.get(key)
-    pipe.delete(key)
-    raw, _ = pipe.execute()
-
-    if not raw:
+    payload = current_app.handoff_store.claim(token)
+    if not payload:
         return "This link has expired. Click Connect in the extension again.", 400
-
-    payload = json.loads(raw)
     session.clear()
     store_login(payload["cookies"], payload["user"])
     return redirect("/")

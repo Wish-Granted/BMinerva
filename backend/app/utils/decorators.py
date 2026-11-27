@@ -13,11 +13,16 @@ def login_required(f):
     def wrapper(*args, **kwargs):
         if "eminerva_cookies" not in session:
             return jsonify({"error": "login required"}), 401
+
+        eminerva_session = get_eminerva_session()
+        if eminerva_session is None:
+            session.clear()
+            return jsonify({"error": "login required"}), 401
+
         last_checked = session.get("eminerva_last_checked", 0)
         now = time.time()
 
         if now - last_checked > EMINERVA_CHECK_TTL_SECONDS:
-            eminerva_session = get_eminerva_session()
             try:
                 if not is_logged_in(eminerva_session):
                     session.clear()
